@@ -1,4 +1,3 @@
-# %% Import packages
 import pandas as pd
 import numpy as np
 from sklearn.metrics import (confusion_matrix,
@@ -6,8 +5,6 @@ from sklearn.metrics import (confusion_matrix,
                              precision_recall_curve, average_precision_score)
 
 
-
-# %% Auxiliar functions
 def get_scores(y_true, y_pred, score_fun):
     nclasses = np.shape(y_true)[1]
     scores = []
@@ -62,7 +59,7 @@ y_cardio = pd.read_csv('./data/annotations/cardiology_residents.csv').values
 y_emerg = pd.read_csv('./data/annotations/emergency_residents.csv').values
 y_student = pd.read_csv('./data/annotations/medical_students.csv').values
 # get y_score for different models
-y_score_list = np.load('/content/automatic-ecg-diagnosis/outputs/dnn_output.npy')
+y_score_list = np.load('outputs/dnn_output.npy')
 
 
 # %% Get average model model
@@ -79,7 +76,6 @@ y_score_best = y_score_list
 _, _, threshold = get_optimal_precision_recall(y_true,y_score_list)
 threshold=[round(elem,3) for elem in threshold]
 print(threshold)
-#threshold = np.array([0.214, 0.097, 0.130, 0.475, 0.001,0.001]) #nostro schifo
 #threshold = np.array([0.124, 0.07, 0.05, 0.278, 0.390, 0.174]) #loro top
 mask = y_score_best > threshold
 # Get neural network prediction
@@ -103,5 +99,5 @@ scores_all_df = pd.concat(scores_list, axis=1, keys=['DNN', 'cardio.', 'emerg.',
 scores_all_df = scores_all_df.swaplevel(0, 1, axis=1)
 scores_all_df = scores_all_df.reindex(level=0, columns=score_fun.keys())
 # Save results
-scores_all_df.to_excel("/content/automatic-ecg-diagnosis/results/tables/scores.xlsx", float_format='%.3f')
-scores_all_df.to_csv("/content/automatic-ecg-diagnosis/results/tables/scores.csv", float_format='%.3f')
+scores_all_df.to_excel("outputs/results/tables/scores.xlsx", float_format='%.3f')
+scores_all_df.to_csv("outputs/results/tables/scores.csv", float_format='%.3f')
