@@ -17,7 +17,7 @@ def data_name(path, val_split):
 
 def generate_normalized_dataset(path, name, new_path, n_train):
     f = h5py.File(path, "r")
-    x = f[name]
+    x = np.array(f[name])
     f.close()
 
     train = x[:n_train]
@@ -88,4 +88,3 @@ class ECGSequence(Sequence):
 
     def __del__(self):
         self.f.close()
-
