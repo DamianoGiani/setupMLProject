@@ -52,12 +52,12 @@ class ECGSequence(Sequence):
             generate_normalized_dataset(path_to_hdf5, hdf5_dset, path,
                                         n_train, std_scaler_path, minmax_scaler_path)
 
-        train_seq = cls(path, hdf5_dset, path_to_csv, batch_size, end_idx=n_train)
-        valid_seq = cls(path, hdf5_dset, path_to_csv, batch_size, start_idx=n_train)
+        train_seq = cls(path, hdf5_dset, val_split, path_to_csv, batch_size, end_idx=n_train)
+        valid_seq = cls(path, hdf5_dset, val_split, path_to_csv, batch_size, start_idx=n_train)
 
         return train_seq, valid_seq
 
-    def __init__(self, path_to_hdf5, hdf5_dset, path_to_csv=None, batch_size=8,
+    def __init__(self, path_to_hdf5, hdf5_dset, val_split, path_to_csv=None, batch_size=8,
                  start_idx=0, end_idx=None, is_test=False):
         if path_to_csv is None:
             self.y = None
@@ -67,8 +67,8 @@ class ECGSequence(Sequence):
         self.f = h5py.File(path_to_hdf5, "r")
         self.x = self.f[hdf5_dset]
         if is_test:
-            std_scaler = load(open('./scalers/stdScaler.pkl', 'rb'))
-            minmax_scaler = load(open('./scalers/minMaxScaler.pkl', 'rb'))
+            std_scaler = load(open('./scalers/stdScaler{}%.pkl'.format(val_split), 'rb'))
+            minmax_scaler = load(open('./scalers/minMaxScaler{}%.pkl'.format(val_split), 'rb'))
             self.x = minmax_scaler.transform(std_scaler.transform(self.x))
         self.batch_size = batch_size
         if end_idx is None:

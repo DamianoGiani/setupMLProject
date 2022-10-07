@@ -12,6 +12,8 @@ if __name__ == '__main__':
                         help='path to hdf5 file containing tracings')
     parser.add_argument('path_to_model',  # or model_date_order.hdf5
                         help='file containing training model.')
+    parser.add_argument('--val_split', type=str, default=0.1,
+                        help='percentual used of the training set as validation')
     parser.add_argument('--dataset_name', type=str, default='tracings',
                         help='name of the hdf5 dataset containing tracings')
     parser.add_argument('--output_file', default="./outputs/dnn_output.npy",  # or predictions_date_order.csv
@@ -24,7 +26,7 @@ if __name__ == '__main__':
         warnings.warn("Unknown arguments:" + str(unk) + ".")
 
     # Import data
-    seq = ECGSequence(args.path_to_hdf5, args.dataset_name,
+    seq = ECGSequence(args.path_to_hdf5, args.dataset_name, args.val_split,
                       batch_size=args.bs, is_test=True)
     # Import model
     model = load_model(args.path_to_model, compile=False)
