@@ -4,7 +4,7 @@ import pandas as pd
 from tensorflow.keras.utils import Sequence
 import numpy as np
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from pickle import dump
+from pickle import dump, load
 from tslearn.preprocessing import TimeSeriesScalerMinMax, TimeSeriesScalerMeanVariance
 from os.path import exists
 
@@ -45,7 +45,7 @@ class ECGSequence(Sequence):
         path = './trainData/preprocessed/{}'.format(namefile)
         std_scaler_path = './scalers/stdScaler.pkl'
         minmax_scaler_path = './scalers/minMaxScaler.pkl'
-        n_samples = len(pd.read_csv(path_to_csv))
+        n_samples = len(pd.read_csv(path_to_csv, header=None))
         n_train = math.ceil(n_samples * (1 - val_split))
 
         if not exists(path) or not exists(std_scaler_path) or not exists(minmax_scaler_path):
@@ -57,7 +57,7 @@ class ECGSequence(Sequence):
         return train_seq, valid_seq
 
     def __init__(self, path_to_hdf5, hdf5_dset, path_to_csv=None, batch_size=8,
-                 start_idx=0, end_idx=None):
+                 start_idx=0, end_idx=None, isTest=False):
         if path_to_csv is None:
             self.y = None
         else:
@@ -65,6 +65,10 @@ class ECGSequence(Sequence):
         # Get tracings
         self.f = h5py.File(path_to_hdf5, "r")
         self.x = self.f[hdf5_dset]
+        if isTest:
+            std_scaler = load(open('./scalers/stdScaler.pkl', 'rb'))
+            minmax_scaler = load(open('./scalers/minMaxScaler.pkl', 'rb'))
+            self.x = minmax_scaler.transform(std_scaler.transform(self.x))
         self.batch_size = batch_size
         if end_idx is None:
             end_idx = len(self.x)
