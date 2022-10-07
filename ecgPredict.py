@@ -12,7 +12,7 @@ if __name__ == '__main__':
                         help='path to hdf5 file containing tracings')
     parser.add_argument('path_to_model',  # or model_date_order.hdf5
                         help='file containing training model.')
-    parser.add_argument('--val_split', type=str, default=0.1,
+    parser.add_argument('--val_split', type=float, default=0.1,
                         help='percentual used of the training set as validation')
     parser.add_argument('--dataset_name', type=str, default='tracings',
                         help='name of the hdf5 dataset containing tracings')
