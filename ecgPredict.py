@@ -14,7 +14,7 @@ if __name__ == '__main__':
                         help='file containing training model.')
     parser.add_argument('--dataset_name', type=str, default='tracings',
                         help='name of the hdf5 dataset containing tracings')
-    parser.add_argument('--output_file', default="./dnn_output.npy",  # or predictions_date_order.csv
+    parser.add_argument('--output_file', default="./outputs/dnn_output.npy",  # or predictions_date_order.csv
                         help='output csv file.')
     parser.add_argument('-bs', type=int, default=32,
                         help='Batch size.')
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     # Import data
     seq = ECGSequence(args.path_to_hdf5, args.dataset_name,
-                      batch_size=args.bs, isTest=True)
+                      batch_size=args.bs, is_test=True)
     # Import model
     model = load_model(args.path_to_model, compile=False)
     model.compile(loss='binary_crossentropy', optimizer=Adam())
